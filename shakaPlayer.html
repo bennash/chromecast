@@ -1,0 +1,48 @@
+<html>
+<head>
+    <script src="shaka-player.compiled.js"></script>
+</head>
+<body>
+    <video id="video" width="640" height="480"
+           crossorigin="anonymous" 
+           controls>
+        Your browser doesn't support HTML5 video.
+    </video>
+</body>
+<script>
+    function initPlayer() {
+        shaka.polyfill.installAll();
+    //shaka.util.installAll();
+
+        var video = document.getElementById('video');
+        var player = new shaka.Player(video);
+        window.player = player;
+
+        player.addEventListener('error', function(event) {
+          console.error(event);
+          });
+
+        var manifestUri = 'http://dash.lcdn.vidmais.com.br/out/i/Algar_Telecom_-_Production/233/13/VU05627542.mpd';
+		var licenseServer = "http://link.theplatform.com/s/tID-gC/WCeboDFDmWmY";
+		player.configure({
+		    drm: {
+		      servers: { 'com.widevine.alpha': licenseServer }
+		    }
+		});
+		
+        // Try to load a manifest.
+		// This is an asynchronous process.
+		player.load(manifestUri).then(function() {
+			// This runs if the asynchronous load is successful.
+			console.log('The video has now been loaded!');
+		}).catch(onError);  // onError is executed if the asynchronous load fails.
+
+
+    }
+	
+	function onError(error) {
+  // Log the error.
+  console.error('Error code', error.code, 'object', error);
+}
+    document.addEventListener('DOMContentLoaded', initPlayer);
+</script>
